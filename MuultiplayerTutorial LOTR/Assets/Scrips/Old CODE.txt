@@ -1,0 +1,337 @@
+///// Code before restructuring SpielFeldTabelle////
+    void LoadSpielfeldData()
+    {
+        for (int i = 0; i < Data_SpielfeldTabelle.GetLength(0); i++)
+        {
+            if (Data_SpielfeldTabelle[i,0].Trim().Equals("") || Data_SpielfeldTabelle[i, 0].Trim().Equals("Nr"))
+            {
+                //  print(Data_SpielfeldTabelle[i, 0]);
+            }
+            else
+            {
+               // print(Data_SpielfeldTabelle[i, 0]);
+                Buildings.TypeOfBuildings building1 = Buildings.TypeOfBuildings.Empty;
+
+                int fieldNb = int.Parse(Data_SpielfeldTabelle[i, 0]);
+                string fieldName = Data_SpielfeldTabelle[i, 1];
+
+                if (convertToBuilding(Data_SpielfeldTabelle[i, 2]) && building1 == Buildings.TypeOfBuildings.Empty)
+                    building1 = Buildings.TypeOfBuildings.Mine;
+                if (convertToBuilding(Data_SpielfeldTabelle[i, 2]) && convertToBuilding(Data_SpielfeldTabelle[i, 10]))
+                    building1 = Buildings.TypeOfBuildings.fortressMine;
+                // print(building1);
+                int OreOutpt = int.Parse(Data_SpielfeldTabelle[i,3]);
+
+                if (convertToBuilding(Data_SpielfeldTabelle[i, 4]) && building1 == Buildings.TypeOfBuildings.Empty)
+                    building1 = Buildings.TypeOfBuildings.Farm;
+
+                int fertility = int.Parse(Data_SpielfeldTabelle[i, 5]);
+
+                if (convertToBuilding(Data_SpielfeldTabelle[i, 6]))
+                {
+                    if (building1 == Buildings.TypeOfBuildings.Mine)
+                    {
+                        building1 = Buildings.TypeOfBuildings.upgradedMine;
+                    }
+                    else if (building1 == Buildings.TypeOfBuildings.Farm)
+                    {
+                        building1 = Buildings.TypeOfBuildings.upgradedFarm;
+                    }
+                }
+
+                if (convertToBuilding(Data_SpielfeldTabelle[i, 7]) && building1 == Buildings.TypeOfBuildings.Empty)
+                    building1 = Buildings.TypeOfBuildings.Castle;
+
+                if (convertToBuilding(Data_SpielfeldTabelle[i, 8]) && building1 == Buildings.TypeOfBuildings.Empty)
+                    building1 = Buildings.TypeOfBuildings.City;
+
+                int result_population;
+                bool bool_population = int.TryParse(Data_SpielfeldTabelle[i, 9], out result_population);
+                if (!bool_population)
+                    result_population = 0;
+                int population = result_population;
+
+                if (convertToBuilding(Data_SpielfeldTabelle[i, 10]) && building1 == Buildings.TypeOfBuildings.Empty)
+                    building1 = Buildings.TypeOfBuildings.Stronghold;
+
+                if (convertToBuilding(Data_SpielfeldTabelle[i, 11]) && building1 == Buildings.TypeOfBuildings.Empty)
+                    building1 = Buildings.TypeOfBuildings.Citadel;
+
+                string heroOrigine = Data_SpielfeldTabelle[i, 12];
+                string specials = Data_SpielfeldTabelle[i, 13];
+                string race = Data_SpielfeldTabelle[i, 14];
+                if (race.Length <= 1)
+                    race = "Nobody";
+
+                Race.Peoples temp_people = (Race.Peoples)System.Enum.Parse(typeof(Race.Peoples), race);
+                if (temp_people == 0)
+                    temp_people = Race.Peoples.Nobody;
+                
+                generateStartConditions(fieldNb, fieldName, OreOutpt, fertility, population, heroOrigine, specials, building1, temp_people,true);
+
+            }
+        }
+    }
+
+    bool convertToBuilding(string lineparse)
+    {
+        if (lineparse.ToLower().Trim().Equals("ja"))
+            return true;
+        else
+            return false;
+    }
+
+
+	// Code for building restriction! so far unused, managed with fertility and Ore output
+	    public void PossibleBuildingDefault()
+    {
+        possibelBuildings = new List<Buildings.TypeOfBuildings>();
+        possibelBuildings.Add(Buildings.TypeOfBuildings.Farm);
+        possibelBuildings.Add(Buildings.TypeOfBuildings.Fort);
+        possibelBuildings.Add(Buildings.TypeOfBuildings.City);
+        possibelBuildings.Add(Buildings.TypeOfBuildings.Tower);
+        possibelBuildings.Add(Buildings.TypeOfBuildings.Castle);
+        possibelBuildings.Add(Buildings.TypeOfBuildings.Stronghold);
+        possibelBuildings.Add(Buildings.TypeOfBuildings.Village);
+        possibelBuildings.Add(Buildings.TypeOfBuildings.Mine);
+    }
+
+	    public void processPossibleBuildings(int FieldNb, string possibilities)
+    {
+        GameObject hex = GameObject.Find("Hexagon_" + FieldNb.ToString());
+        HexagonSettings HexSet = hex.GetComponent<HexagonSettings>();
+        Buildings HexBuilding = null;
+
+        string[] severalBuildings = possibilities.Split(',');
+        if (severalBuildings.Length != 0)
+        {
+            foreach (string item in severalBuildings)
+            {
+                switch (item.Trim())
+                {
+                    case "All":
+
+                        break;
+                    case "Farm":
+
+                        break;
+                    case "Tower":
+
+                        break;
+                    case "Fort":
+
+                        break;
+                    case "City":
+
+                        break;
+                    case "Stronghold":
+
+                        break;
+                    case "Castel":
+
+                        break;
+                    case "Mine":
+
+                        break;
+                    case "Village":
+
+                        break;
+                    default:
+                        if (item.Length > 1)
+                        {
+                            Debug.LogWarning("Unknown possibilities on Field " + FieldNb+": " + item);
+                        }
+                        break;
+                }
+            }
+        }
+        else
+            print(possibilities + "," + FieldNb);
+    }
+///////////////
+
+ void generatePlayer()
+    {
+        foreach (Race.Peoples peoples in Enum.GetValues(typeof(Race.Peoples)))
+        {
+            GameObject newPlayer = new GameObject(peoples.ToString());
+            newPlayer.transform.SetParent(GameObject.FindGameObjectWithTag("Peoples_Container").transform);
+            //newPlayer.AddComponent<PlayerSettings>();
+            //newPlayer.GetComponent<PlayerSettings>().peoples = peoples;
+        }
+    }
+/////////
+
+
+
+
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            playTable = new PlayTable();
+            playTable.CreatePlayGround();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            Buildings test = fieldList[11].MainBuilding;
+
+            test.NbOfDices = 5;
+        }
+
+
+////////
+
+ public void CheckAndImportFile(string path, string dataType, string storage)
+    {
+       // print(path);
+        try// Open the text file using a stream reader.
+        {
+            using (StreamReader reader = new StreamReader(path))
+            {
+                string Data_raw = reader.ReadToEnd();
+                if (Data_raw == null)
+                    return;
+                var Data = new string[0,0]; // ProcessData(Data_raw, dataType,storage);
+                switch (storage)
+                {
+                    case "PlayerInfo":
+                        game.Data_GeneralPlayerInformation = Data;
+                        break;
+                    case "GameInfo":
+                        game.Data_GeneralGameInformation = Data;
+                        guiHandler.activateRaceToggles();
+                        break;
+                    case "BuildingsInfo":
+                        game.Data_Buildinginformation = Data;
+                        break;
+                    case "Spielfeld":
+                        game.Data_SpielfeldTabelle = Data;
+                        break;
+                    default:
+                        print("Error:" + storage);
+                        break;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            game.showPopUp_FileError = true;
+            game.PopUp_ErrorText =
+                "The file could not be read: " +
+                 e.Message + "\n" +
+                "Please check file! and reload programm:" +
+                path;
+        }
+    }
+
+    /// <summary>
+    /// Processed the data to a 2D string array
+    /// </summary>
+    /// <param name="rawData">Data from File saved as one string.</param> 
+    /// <param name="dataType">Table vs List (different separators).</param> 
+    /// <param name="storage">Variable that holds the raw data for later use.</param>
+    /// <returns></returns>
+    public string[,] ProcessData(string rawData, string dataType, string storage) 
+    {
+        string[,] DataArray = null;
+        string[] Data = rawData.Split('\n');
+
+        switch (dataType)
+        {
+            case "Table":
+
+                string[] FirstLine = Data[0].Split(';');
+                DataArray = null;
+                DataArray = new string[Data.Length, FirstLine.Length];
+
+                for (int i = 0; i < Data.Length; i++)
+                {
+                    string[] Words = Data[i].Split(';');
+                   // print(Data[i]);
+                    for (int i2 = 0; i2 < Words.Length; i2++)
+                    {
+                        DataArray[i, i2] = Words[i2];
+                        //print(DataArray[i, i2]);
+                    }
+                }            
+                break;
+
+            case "List":
+                DataArray = new string[Data.Length, 2];
+                int i3 = 0;                
+                foreach (var item in Data)
+                {                     
+                  //  print(item);
+                    string[] lineParts = item.Split('=');
+                    if (lineParts.Length == 2)
+                    {
+                        DataArray[i3, 0] = lineParts[0];
+                        DataArray[i3, 1] = lineParts[1];
+                        switch (lineParts[0].Trim())
+                        {
+                            case "Dropboxfolder":
+                                game.filepath_Dropbox = lineParts[1].Trim();
+                                break;
+                            case "Path_Buildings":
+                                game.filepath_Buildinginformation = lineParts[1].Trim();
+                                break;
+                            case "Path_GeneralInfo":
+                                game.filepath_GeneralGameInformation = lineParts[1].Trim();
+                                break;
+                            case "Path_Spielfeld":
+                                game.filepath_SpielfeldTabelle = lineParts[1].Trim();
+                                break;
+                            case "NbOfPlayers":
+                                guiHandler.NbrOfPlayer = int.Parse(lineParts[1].Trim());
+                                break;
+                            case "PlayerNumber":
+                                    guiHandler.PlayerNumber = int.Parse(lineParts[1].Trim());                             
+                                break;
+                            case "CurrentRound":
+                                game.inputField_currentRound.text = lineParts[1];
+                                break;
+                            case "PlayersName":
+                                string[] nameArray = lineParts[1].Split(',');
+                                guiHandler.PlayerName = nameArray[guiHandler.PlayerNumber - 1];
+                                break;
+                            case "Startgeld":
+                                guiHandler.StartGeld = int.Parse(lineParts[1].Trim());
+                                for (int i = 0; i < GameObject.FindGameObjectWithTag("Peoples_Container").transform.childCount; i++)
+                                {
+                                    Transform child = GameObject.FindGameObjectWithTag("Peoples_Container").transform.GetChild(i);
+                                    // TODO
+                                    // child.gameObject.GetComponent<PlayerSettings>().actualMoney = guiHandler.StartGeld;
+                                }
+                                break;
+
+                            default:
+                                string[] tempLinePart1 = lineParts[0].Trim().Split('_');
+                                if (tempLinePart1[0].Equals("Player"))
+                                {
+                                    string[] tempLinePart2 = lineParts[1].Split(',');
+                                    List<Race.Peoples> raceList = new List<Race.Peoples>();
+                                    foreach (string item1 in tempLinePart2)
+                                    {
+                                        Race.Peoples temp_people = (Race.Peoples)System.Enum.Parse(typeof(Race.Peoples), item1.Trim());
+                                        raceList.Add(temp_people);
+                                        
+                                    }
+                                    guiHandler.Players.Add(int.Parse(tempLinePart1[1]), raceList);                                                                                                        
+                                }
+                                else
+                                    print(lineParts[1]);
+                                //print("Error");
+                                break;
+                        }
+                    }
+                    i3++;
+                }
+                break;
+
+            default:
+                print("Check datatype: "+ dataType);
+                break;               
+        }
+        return DataArray;
+    }

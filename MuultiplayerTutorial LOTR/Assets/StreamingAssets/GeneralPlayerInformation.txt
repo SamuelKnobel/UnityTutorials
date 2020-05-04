@@ -1,0 +1,10 @@
+Dropboxfolder =C:/Users/HP/Dropbox/Herr der Ringe/Regeln und Profile/Kampagne/Aktualisierter Ordner 2018/UNITY
+Path_Buildings =C:/Users/HP/Dropbox/Herr der Ringe/Regeln und Profile/Kampagne/Aktualisierter Ordner 2018/UNITY/CostsBuilding.csv
+Path_GeneralInfo =C:/Users/HP/Dropbox/Herr der Ringe/Regeln und Profile/Kampagne/Aktualisierter Ordner 2018/UNITY/GeneralGameInformation.txt
+Path_Spielfeld =C:/Users/HP/Dropbox/Herr der Ringe/Regeln und Profile/Kampagne/Aktualisierter Ordner 2018/UNITY/SpielfeldTabelle.csv
+
+%Dropboxfolder =C:/Users/samue/Dropbox/Herr der Ringe/Regeln und Profile/Kampagne/Aktualisierter Ordner 2018/UNITY
+%Path_Buildings =C:/Users/samue/Dropbox/Herr der Ringe/Regeln und Profile/Kampagne/Aktualisierter Ordner 2018/UNITY/CostsBuilding.csv
+%Path_GeneralInfo =C:/Users/samue/Dropbox/Herr der Ringe/Regeln und Profile/Kampagne/Aktualisierter Ordner 2018/UNITY/GeneralGameInformation.txt
+%Path_Spielfeld =C:/Users/samue/Dropbox/Herr der Ringe/Regeln und Profile/Kampagne/Aktualisierter Ordner 2018/UNITY/SpielfeldTabelle.csv
+PlayerNumber = 1
