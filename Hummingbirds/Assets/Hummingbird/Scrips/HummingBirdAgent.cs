@@ -253,9 +253,6 @@ public class HummingBirdAgent : Agent
         rigidbody.WakeUp();
     }
 
-
-
-
     /// <summary>
     ///  Move the agent to a safe random position(i.e. does not collide with anything
     ///  If in frobt of flower, also point the beak at the flower
@@ -370,9 +367,9 @@ public class HummingBirdAgent : Agent
         if (collider.CompareTag("nectar"))
         {
             Vector3 closestPointToBeakTip = collider.ClosestPoint(beakTip.position);
+
             // Check if th closest collision point is close to the beak tip
             // Note : a collition with anythin but the beak tip should not count
-
             if (Vector3.Distance(beakTip.position, closestPointToBeakTip)< BeakTipRadius)
             {
                 // Look up the flower for this collider
@@ -390,10 +387,49 @@ public class HummingBirdAgent : Agent
                     //calculate Rewaed for getting nectar
                     float bonus = 0.02f * Mathf.Clamp01(Vector3.Dot(transform.forward.normalized, -nearestFlower.FlowerUpVector.normalized));
 
-                    AddReward(bonus);
+                    AddReward(0.01f+bonus);
                 }
-
+                // if flower is empty update neares flower
+                if (!flower.HasNectar)
+                {
+                    UpdateNearestFlower();
+                }
             }
+        }
+    }
+
+    /// <summary>
+    /// called when the agent collides with something solid
+    /// </summary>
+    /// <param name="collision">Collision Info</param>
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (trainingMode&& collision.collider.CompareTag("boundary"))
+        {
+            // collided with the area boundary, give a negative reward
+            AddReward(-.5f);
+        }   
+    }
+
+    /// <summary>
+    /// Called every frame
+    /// </summary>
+    private void Update()
+    {
+        // Draw a line from the beaktip to the neares flower
+        if (nearestFlower != null)
+        {
+            Debug.DrawLine(beakTip.position, nearestFlower.FlowerCenterPosition, Color.green);
+        }
+    }/// <summary>
+    /// called  every .02 sec
+    /// </summary>
+    private void FixedUpdate()
+    {
+        // avoid scenariop where neares flower is stolen by opponent and not updated
+        if (nearestFlower != null && ! nearestFlower.HasNectar)
+        {
+            UpdateNearestFlower();
         }
     }
 
